@@ -1,0 +1,43 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: metadata-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      MONGO_URI: mongodb://mongo:27017
+    ports:
+      - "8000:8000"
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - metadata-net
+
+  mongo:
+    image: mongo:7.0
+    container_name: metadata-mongo
+    restart: unless-stopped
+    command: ["--bind_ip_all", "--quiet", "--setParameter", "logLevel=0"]
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - metadata-net
+
+volumes:
+  mongo_data:
+
+networks:
+  metadata-net:
+    driver: bridge
