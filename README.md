@@ -197,7 +197,7 @@ pytest
 
 Tests use:
 - `mongomock-motor` for in-memory MongoDB mocking
-- `respx` for HTTP request mocking
+- `httpx.MockTransport` for HTTP request mocking
 
 No running database is required for tests.
 

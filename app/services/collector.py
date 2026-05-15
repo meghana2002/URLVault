@@ -57,6 +57,6 @@ class HttpMetadataCollector:
         async with httpx.AsyncClient(
             timeout=timeout,
             follow_redirects=True,
+            max_redirects=self._settings.http_max_redirects,
         ) as client:
-            client.max_redirects=self._settings.http_max_redirects
             return await _do(client)
